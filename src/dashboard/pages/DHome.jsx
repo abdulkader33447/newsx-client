@@ -1,10 +1,9 @@
-import  BlogPostForm  from "../pages/BlogPostForm";
+import PostedBlog from "./PostedBlog";
 
 const DHome = () => {
   return (
     <div>
-      
-      <BlogPostForm />
+      <PostedBlog />
     </div>
   );
 };

@@ -1,10 +1,10 @@
-
+import BlogPostForm from "./BlogPostForm";
 
 const ContentManege = () => {
   return (
     <div>
-      <h1>ContentManege</h1>
       
+      <BlogPostForm />
     </div>
   );
 };

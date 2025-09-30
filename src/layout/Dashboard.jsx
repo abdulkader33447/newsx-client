@@ -62,7 +62,7 @@ const Dashboard = () => {
         // Overlay
         <div className="fixed inset-0 z-40 flex lg:hidden">
           <div
-            className="fixed inset-0 bg-black bg-opacity-40"
+            className="fixed inset-0 bg-black/40 backdrop-blur-md bg-opacity-40"
             onClick={() => setSidebarOpen(false)}
           />
 
