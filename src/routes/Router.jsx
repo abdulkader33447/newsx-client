@@ -1,10 +1,12 @@
 import { createBrowserRouter } from "react-router";
-// import Login from "../components/Login";
 import Home from "../Pages/Home/Home";
 import Layout from "../layout/Layout";
 import Login from "../Pages/Login";
 import Register from "../Pages/Register";
 import Dashboard from "../layout/Dashboard";
+import DHome from "../dashboard/pages/DHome";
+import ContentManege from "../dashboard/pages/ContentManege";
+import AdminRoute from "../Context/AdminRoute/AdminRoute";
 
 export const router = createBrowserRouter([
   {
@@ -12,7 +14,7 @@ export const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "/",
+        index: true,
         element: <Home />,
       },
       {
@@ -28,10 +30,31 @@ export const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />,
-    children:[
+    children: [
       {
-        path:"",
-      }
-    ]
+        index: true,
+        element: (
+          <AdminRoute>
+            <DHome />
+          </AdminRoute>
+        ),
+      },
+      // {
+      //   path: "dhome",
+      //   element: (
+      //     <AdminRoute>
+      //       <DHome />
+      //     </AdminRoute>
+      //   ),
+      // },
+      {
+        path: "content",
+        element: (
+          <AdminRoute>
+            <ContentManege />
+          </AdminRoute>
+        ),
+      },
+    ],
   },
 ]);

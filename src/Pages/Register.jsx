@@ -5,14 +5,12 @@ import useAuth from "../Hooks/useAuth";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import useAxios from "../Hooks/useAxios";
+import { Link, useNavigate } from "react-router";
+import Loading from "../components/Loading";
 
 const Register = () => {
-  const { createUser } = useAuth();
-  const { user } = useAuth();
-  // const [formData, setFormData] = useState({
-  //   email: "",
-  //   password: "",
-  // });
+  const { createUser, loading } = useAuth();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -23,12 +21,11 @@ const Register = () => {
   const [error, setError] = useState("");
   const [showPass, setShowPass] = useState(false);
   const axios = useAxios();
-  console.log(user);
 
   const onSubmit = async (data) => {
+    setError("");
     try {
-      const result = createUser(data.email, data.password);
-      // console.log("form submitted", data);
+      const result = await createUser(data.email, data.password);
 
       const userInfo = {
         name: data.name,
@@ -38,47 +35,30 @@ const Register = () => {
 
       const userRes = await axios.post("users", userInfo);
       console.log(userRes.data);
-      // show alert
+
       Swal.fire({
         position: "top-end",
         icon: "success",
-        title: "Successfully logged in",
+        title: "Successfully signed up",
         showConfirmButton: false,
         timer: 2000,
       });
-    } catch (error) {
-      console.log("login failed", error);
+
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Signup failed. Please try again.");
     }
   };
 
-  // input change handler
-  // const handleChange = (e) => {
-  //   setFormData({
-  //     ...formData,
-  //     [e.target.name]: e.target.value,
-  //   });
-  // };
-
-  // submit handler
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-
-  //   if (!formData.email || !formData.password) {
-  //     setError("All fields are required!");
-  //     return;
-  //   }
-
-  //   setError("");
-  //   console.log("Form submitted:", formData);
-  //   // write API call / authentication logic
-  // };
+  if (loading) return <Loading/>;
 
   return (
-    <div className="flex justify-center items-center min-h-screen w-11/12 mx-auto">
+    <div className="flex justify-center items-center min-h-screen w-11/12 mx-auto pt-20">
       <div className="bg-white shadow-lg rounded-2xl sm:p-8 p-6 w-96">
-        {/* <h2 className="text-2xl font-bold text-center"></h2> */}
         <img src={logo} alt="logo" className="sm:w-50 w-35 mx-auto" />
-        <p className="text-center mb-6">Welcome Newsx, Please Log In</p>
+        <p className="text-center mb-6">Welcome Newsx, Please Sign up</p>
+
         {error && (
           <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
         )}
@@ -90,42 +70,32 @@ const Register = () => {
             <input
               type="text"
               placeholder="Enter your name"
-              // name="name"
-              // value={formData.name}
-              // onChange={handleChange}
               className="w-full border-none bg-gray-200 rounded-lg px-3 py-2 focus:outline-none"
               {...register("name", {
-                required: true,
+                required: "Name is required",
               })}
             />
-
-            {errors.name?.type === "required" && (
-              <p className="text-red-500">name is required</p>
+            {errors.name && (
+              <p className="text-red-500">{errors.name.message}</p>
             )}
           </div>
 
           {/* Email */}
-          <div>
+          <div className="relative">
             <label className="block text-sm font-medium mb-1">Email</label>
             <input
               type="email"
               placeholder="Enter your email"
-              // name="email"
-              // value={formData.email}
-              // onChange={handleChange}
               className="w-full border-none bg-gray-200 rounded-lg px-3 py-2 focus:outline-none"
               {...register("email", {
-                required: true,
+                required: "Email is required",
                 pattern: {
                   value: /^[^\s@]+@gmail\.com$/,
                   message: "Only 'gmail' addresses are allowed",
                 },
               })}
             />
-            {errors.email?.type === "required" && (
-              <p className="text-red-500">email is required</p>
-            )}
-            {errors.email?.type === "pattern" && (
+            {errors.email && (
               <p className="text-red-500">{errors.email.message}</p>
             )}
           </div>
@@ -136,45 +106,27 @@ const Register = () => {
             <input
               type={showPass ? "text" : "password"}
               placeholder="Enter your password"
-              // name="password"
-              // value={formData.password}
-              // onChange={handleChange}
               className="w-full border-none bg-gray-200 rounded-lg px-3 py-2 focus:outline-none"
               {...register("password", {
-                required: true,
-                minLength: 6,
-                // pattern: {
-                //   value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/,
-                //   message:
-                //     "Password must have at least 6 characters including uppercase, lowercase, and a number",
-                // },
+                required: "Password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
               })}
             />
             {showPass ? (
-              <>
-                <IoEyeOutline
-                  className="absolute right-7 top-[34px] size-5 cursor-pointer"
-                  onClick={() => setShowPass(false)}
-                />
-              </>
+              <IoEyeOutline
+                className="absolute right-7 top-[34px] cursor-pointer"
+                onClick={() => setShowPass(false)}
+              />
             ) : (
-              <>
-                <IoEyeOffOutline
-                  className="absolute right-7 top-[34px] size-5 cursor-pointer"
-                  onClick={() => setShowPass(true)}
-                />
-              </>
+              <IoEyeOffOutline
+                className="absolute right-7 top-[34px] cursor-pointer"
+                onClick={() => setShowPass(true)}
+              />
             )}
-
-            {errors.password?.type === "required" && (
-              <p className="text-red-500">password is required</p>
-            )}
-            {errors.password?.type === "minLength" && (
-              <p className="text-red-500">
-                password must be 6 characters or longer
-              </p>
-            )}
-            {errors.password?.type === "pattern" && (
+            {errors.password && (
               <p className="text-red-500">{errors.password.message}</p>
             )}
           </div>
@@ -184,14 +136,22 @@ const Register = () => {
             type="submit"
             className="w-full cursor-pointer bg-[#6200EE] text-white py-2 rounded-lg hover:bg-[#6300eedc] transition"
           >
-            Login
+            Sign up
           </button>
         </form>
+
         <div className="flex items-center my-10">
           <hr className="flex-grow border-t border-gray-300" />
           <span className="mx-4">Or</span>
           <hr className="flex-grow border-t border-gray-300" />
         </div>
+
+        <p className="text-center text-sm">
+          Already have an account?{" "}
+          <Link to="/login" className="text-[#6200EE] font-medium">
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );
