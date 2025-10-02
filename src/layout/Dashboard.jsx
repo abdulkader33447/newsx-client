@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router"; // react-router-dom ব্যবহার করা হয়েছে
+import { Link, NavLink, Outlet } from "react-router";
 import {
   FaHome,
   FaTasks,
@@ -10,6 +10,7 @@ import {
 import { HiOutlineCursorArrowRipple } from "react-icons/hi2";
 import { useState } from "react";
 import DNavbar from "../dashboard/pages/DNavbar";
+import logo from "../assets/logo.png";
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -45,6 +46,9 @@ const Dashboard = () => {
     <div className="flex h-screen bg-gray-50">
       {/* --------------------- Desktop Sidebar --------------------- */}
       <aside className="hidden lg:flex w-fit p-4 bg-white shadow-md flex-col space-y-2">
+        <Link className="mb-8" to="/">
+          <img src={logo} alt="logo" className="h-10 w-auto" />
+        </Link>
         {renderLink("/dashboard", FaHome, "Home")}
         {renderLink(
           "/dashboard/content",
@@ -100,7 +104,9 @@ const Dashboard = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <DNavbar />
         <div className="p-4 bg-white shadow-sm lg:hidden flex justify-between items-center sticky top-0 z-10">
-          <h2 className="text-lg font-semibold">Dashboard</h2>
+          <Link to="/" className="flex items-center cursor-pointer">
+            <img src={logo} alt="Logo" className="h-8 w-auto" />
+          </Link>
           <button
             className="p-2 text-gray-600 hover:text-[#6200EE]"
             onClick={() => setSidebarOpen(true)}

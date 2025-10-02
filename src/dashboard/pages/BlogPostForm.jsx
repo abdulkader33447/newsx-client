@@ -6,6 +6,8 @@ import CategorySelect from "../../components/CategorySelect";
 import axios from "axios";
 import JoditEditor from "jodit-react";
 import debounce from "lodash.debounce";
+import useAxios from "../../Hooks/useAxios";
+import Swal from "sweetalert2";
 
 const categoryOptions = [
   ".NET",
@@ -32,6 +34,8 @@ const categoryOptions = [
 ];
 
 const BlogPostForm = () => {
+  const axiosInstance = useAxios();
+
   const {
     register,
     handleSubmit,
@@ -44,45 +48,62 @@ const BlogPostForm = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const [imageUrl, setImageUrl] = useState(""); // uploaded image url
   const [loading, setLoading] = useState(false);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImagePreview(URL.createObjectURL(file));
-      setValue("image", file);
+  // 🔹 Image Upload to imgbb
+  const handleImgUpload = async (e) => {
+    const image = e.target.files[0];
+    if (!image) return;
+
+    setImagePreview(URL.createObjectURL(image));
+
+    const formData = new FormData();
+    formData.append("image", image);
+
+    const imageUploadUrl = `https://api.imgbb.com/1/upload?key=${
+      import.meta.env.VITE_imgbb_api_key
+    }`;
+
+    try {
+      const res = await axios.post(imageUploadUrl, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const uploadedUrl = res.data.data.url;
+      setImageUrl(uploadedUrl);
+    } catch (err) {
+      console.error("Image upload failed:", err.response?.data || err);
+      setError("Image upload failed");
     }
   };
 
+  // 🔹 Submit Blog
   const onSubmit = async (data) => {
     setLoading(true);
     setError("");
     try {
-      let imageUrl = null;
-      if (data.image) {
-        const formData = new FormData();
-        formData.append("image", data.image);
-
-        // VITE_imgbb_api_key
-        const imgbbApiKey = import.meta.env.VITE_imgbb_api_key;
-        const response = await axios.post(
-          `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`,
-          formData
-        );
-        imageUrl = response.data.data.url;
-      }
+      const { image, ...rest } = data;
 
       const postData = {
-        ...data,
-        imageUrl: imageUrl || "",
+        ...rest,
+        imageUrl, // uploaded image url
       };
 
-      // You can add API calls here.
-      console.log("Form Data with Image URL:", postData);
-      setSuccess("Blog post saved successfully!");
+      const blogRef = await axiosInstance.post("/blogs", postData);
+      // console.log("Blog saved:", blogRef.data);
 
+      setSuccess("Blog post saved successfully!");
       reset();
       setImagePreview(null);
+      setImageUrl("");
+
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Blog published",
+        showConfirmButton: false,
+        timer: 2000,
+      });
     } catch (err) {
       setError("Failed to save blog post. Please try again.");
       console.error(err);
@@ -99,7 +120,6 @@ const BlogPostForm = () => {
     rules: { required: "Content is required" },
   });
 
-  // Jodit Editor configuration
   const config = useMemo(
     () => ({
       height: 500,
@@ -108,34 +128,29 @@ const BlogPostForm = () => {
     []
   );
 
-  //  Important change: Debounced Change Handler created
-// field.onChange will be called after 300ms delay, which will reduce re-rendering.
   const debouncedChange = useMemo(
     () =>
       debounce((newContent) => {
         field.onChange(newContent);
-      }, 3000), 
+      }, 500),
     [field.onChange]
   );
-  
-  // Place Jodit Editor inside useMemo to avoid unnecessary re-renders
+
   const renderJoditEditor = useMemo(() => {
     return (
       <JoditEditor
         value={field.value}
-        // 🛠️ Debounced handler use here
         onChange={debouncedChange}
         config={config}
       />
     );
-  }, [field.value, config, debouncedChange]); 
+  }, [field.value, config, debouncedChange]);
 
   return (
     <div className="min-h-screen">
       <div className="sm:max-w-3xl mx-auto bg-[#E5E0E5] shadow-lg rounded-lg sm:p-6 p-3">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Blog Post</h2>
-          {/* Submit Button form */}
           <div>
             <button
               onClick={handleSubmit(onSubmit)}
@@ -144,18 +159,14 @@ const BlogPostForm = () => {
             >
               {loading ? "Publishing..." : "Publish"}
             </button>
-            <button className="bg-blue-500 text-white px-4 py-2 rounded">
-              Save
-            </button>
           </div>
         </div>
 
-        <div className="border-b border-gray-300 mb-4 pb-2 flex justify-between">
-          <span className="text-blue-600">API ID: Z077279158</span>
-          <span className="text-gray-500">Editing Draft Version</span>
-        </div>
+        {error && <p className="text-red-500">{error}</p>}
+        {success && <p className="text-green-500">{success}</p>}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Title + Image */}
           <div className="flex items-center justify-center gap-5">
             {/* Title */}
             <div className="flex-1">
@@ -173,7 +184,7 @@ const BlogPostForm = () => {
               )}
             </div>
 
-            {/* Image Input */}
+            {/* Image Upload */}
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700">
                 Image
@@ -197,21 +208,14 @@ const BlogPostForm = () => {
                 <input
                   type="file"
                   accept="image/*"
-                  {...register("image")}
-                  onChange={handleImageChange}
+                  onChange={handleImgUpload}
                 />
               </div>
-              {errors.image && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.image.message}
-                </p>
-              )}
             </div>
           </div>
 
-          {/* Is Featured */}
+          {/* Publish Date + Featured */}
           <div className="flex sm:flex-row flex-col sm:gap-5 gap-8">
-            {/* Publish_on */}
             <div className="space-x-5">
               <label className="block text-lg font-medium text-gray-700">
                 Publish_on
@@ -221,24 +225,13 @@ const BlogPostForm = () => {
                 className="mb-5 border border-gray-300 rounded-md p-2"
                 {...register("publish_date")}
               />
-              {errors.publish_date && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.publish_date.message}
-                </p>
-              )}
               <input
                 type="time"
                 className="border border-gray-300 rounded-md p-2"
                 {...register("publish_time")}
               />
-              {errors.publish_time && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.publish_time.message}
-                </p>
-              )}
             </div>
 
-            {/* Is_Featured */}
             <div>
               <label className="block text-lg font-medium text-gray-700">
                 Is_Featured
@@ -273,20 +266,15 @@ const BlogPostForm = () => {
               setValue={setValue}
               errors={errors}
             />
-            {errors.tags && (
-              <p className="text-red-500 text-sm mt-1">{errors.tags.message}</p>
-            )}
           </div>
 
           {/* Category */}
-          <div>
-            <CategorySelect
-              register={register}
-              setValue={setValue}
-              errors={errors}
-              options={categoryOptions}
-            />
-          </div>
+          <CategorySelect
+            register={register}
+            setValue={setValue}
+            errors={errors}
+            options={categoryOptions}
+          />
 
           {/* Author */}
           <div>
@@ -299,11 +287,6 @@ const BlogPostForm = () => {
               className="w-full border border-gray-300 rounded p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
               {...register("author", { required: "Author is required" })}
             />
-            {errors.author && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.author.message}
-              </p>
-            )}
           </div>
 
           {/* Summary */}
@@ -332,43 +315,19 @@ const BlogPostForm = () => {
             />
           </div>
 
-          {/* Blog Content (Jodit Editor) */}
+          {/* Blog Content */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Blog Content <span className="text-red-600">*</span>
             </label>
-
-            {/* Debounced Editor */}
             {renderJoditEditor}
-
             {errors.content && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.content.message}
               </p>
             )}
           </div>
-
-          {/* Information Section */}
-          <div className="text-sm text-gray-500 mt-4">
-            <p>Created: 6 seconds ago</p>
-            <p>By: deshit-bd team</p>
-            <p>Last Update: 6 seconds ago</p>
-            <p>By: deshit-bd team</p>
-          </div>
         </form>
-
-        {/* Sidebar Actions */}
-        <div className="mt-6 space-y-2">
-          <button className="w-full bg-purple-500 text-white py-2 rounded hover:bg-purple-600">
-            Edit The Model
-          </button>
-          <button className="w-full bg-purple-500 text-white py-2 rounded hover:bg-purple-600">
-            Configure The View
-          </button>
-          <button className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600">
-            Delete This Entry
-          </button>
-        </div>
       </div>
     </div>
   );
