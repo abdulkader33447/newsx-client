@@ -7,6 +7,7 @@ import Dashboard from "../layout/Dashboard";
 import DHome from "../dashboard/pages/DHome";
 import ContentManege from "../dashboard/pages/ContentManege";
 import AdminRoute from "../Context/AdminRoute/AdminRoute";
+import RecentBlogs from "../Pages/RecentBlogs";
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
+      },
+      {
+        path: "/recent-blogs",
+        element: <RecentBlogs />,
       },
       {
         path: "/login",

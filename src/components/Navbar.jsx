@@ -11,7 +11,7 @@ const Navbar = () => {
   const { user, loading, logout } = useAuth();
   const { adminInfo } = useUserInfo(user?.email);
   const [isOpen, setIsOpen] = useState(false);
-  console.log(adminInfo.name,"from nav");
+  console.log(adminInfo.name, "from nav");
 
   const handleLogout = () => {
     logout()
@@ -44,6 +44,12 @@ const Navbar = () => {
           <div className="hidden md:flex space-x-6">
             <Link to="/" className="font-medium hover:text-[#6200EE]">
               Home
+            </Link>
+            <Link
+              to="recent-blogs"
+              className="font-medium hover:text-[#6200EE]"
+            >
+              Resent Blogs
             </Link>
 
             {adminInfo?.name === "admin" && (
@@ -96,13 +102,20 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden bg-gray-100 px-4 pb-4 space-y-3">
+          <div className="md:hidden bg-gray-500/10 backdrop-blur-sm shadow-md px-4 pb-4 space-y-3">
             <Link
               to="/"
               className="block font-medium"
               onClick={() => setIsOpen(false)}
             >
               Home
+            </Link>
+            <Link
+              to="recent-blogs"
+              className="font-medium block"
+              onClick={() => setIsOpen(false)}
+            >
+              Resent Blogs
             </Link>
 
             {user && adminInfo?.name === "admin" && (
@@ -116,7 +129,11 @@ const Navbar = () => {
             )}
 
             {!user && (
-              <Link to="/register" onClick={() => setIsOpen(false)}>
+              <Link
+                className="font-medium block"
+                to="/register"
+                onClick={() => setIsOpen(false)}
+              >
                 Register
               </Link>
             )}

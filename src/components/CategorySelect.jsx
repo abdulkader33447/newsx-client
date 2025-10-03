@@ -10,7 +10,7 @@ const CategorySelect = ({ register, setValue, errors, options }) => {
     if (selected && !categories.includes(selected)) {
       const newCategories = [...categories, selected];
       setCategories(newCategories);
-      setValue("categories", newCategories); // react-hook-form এ value আপডেট
+      setValue("categories", newCategories);
       setSelected("");
     }
   };

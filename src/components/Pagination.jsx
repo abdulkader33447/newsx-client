@@ -9,7 +9,7 @@ const Pagination = ({ page, totalPages, setPage }) => {
   }
 
   return (
-    <div className="flex justify-center items-center gap-10 mt-8 pb-8">
+    <div className="flex justify-center items-center sm:gap-15 gap-8 mt-8 pb-8">
       <button
         className="cursor-pointer hover:bg-gray-100 px-4 py-2 border rounded-xl bg-white text-black disabled:opacity-50"
         disabled={page === 1}

@@ -1,5 +1,3 @@
-// import Login from "../Login";
-
 import Resources from "../Resources";
 
 const Home = () => {
