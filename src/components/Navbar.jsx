@@ -11,7 +11,7 @@ const Navbar = () => {
   const { user, loading, logout } = useAuth();
   const { adminInfo } = useUserInfo(user?.email);
   const [isOpen, setIsOpen] = useState(false);
-  console.log(adminInfo.name, "from nav");
+
 
   const handleLogout = () => {
     logout()

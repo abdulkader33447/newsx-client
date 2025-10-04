@@ -3,6 +3,7 @@ import useAxios from "../Hooks/useAxios";
 import Loading from "../components/Loading";
 import useAuth from "../Hooks/useAuth";
 import { AiOutlineUser } from "react-icons/ai";
+import { Link } from "react-router";
 
 const RecentBlogs = () => {
   const axios = useAxios();
@@ -10,7 +11,7 @@ const RecentBlogs = () => {
   const { user } = useAuth();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+console.log(blogs, "from recent blog");
 
   const fetchBlogs = async () => {
     setLoading(true);
@@ -44,18 +45,19 @@ const RecentBlogs = () => {
           {blogs.length > 0 ? (
             blogs.map((blog) => (
               <div key={blog._id}>
+                
                 <img
                   src={blog.imageUrl}
                   alt={blog.title}
-                  className="w-full h-40 object-cover rounded mb-3"
+                  className="w-full h-40 object-cover rounded mb-3 hover:scale-105 transition-transform duration-700"
                   loading="lazy"
                 />
                 <h3 className="text-[#83C5E0] sm:text-xl text-lg sm:mt-5 mt-3">
                     {blog.categories}
                   </h3>
-                <h2 className="text-2xl font-semibold my-4">
+                <Link to={`/blog/${blog._id}`} className="text-2xl font-semibold my-4">
                   {blog.title}
-                </h2>
+                </Link>
                 <p className="text-sm text-gray-400 mt-2">{blog.summary}</p>
                 <div className="mt-4 flex items-center gap-3">
                   <div>

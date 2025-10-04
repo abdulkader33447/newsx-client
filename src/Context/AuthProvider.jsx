@@ -15,19 +15,19 @@ const AuthProvider = ({ children }) => {
   const createUser = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password)
-      .finally(() => setLoading(false)); // loading বন্ধ
+      .finally(() => setLoading(false));
   };
 
   const login = (email, password) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password)
-      .finally(() => setLoading(false)); // loading বন্ধ
+      .finally(() => setLoading(false));
   };
 
   const logout = () => {
     setLoading(true);
     return signOut(auth)
-      .finally(() => setLoading(false)); // loading বন্ধ
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {

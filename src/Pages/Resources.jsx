@@ -5,6 +5,7 @@ import Loading from "../components/Loading";
 import useAuth from "../Hooks/useAuth";
 import Pagination from "../components/Pagination";
 import CategorySearch from "../components/CategorySearch";
+import { Link } from "react-router";
 
 const Resources = () => {
   const axiosInstance = useAxios();
@@ -117,7 +118,7 @@ const Resources = () => {
                   <img
                     src={blog.imageUrl}
                     alt={blog.title}
-                    className="w-full h-56 object-cover rounded-t-lg"
+                    className="w-full h-56 object-cover rounded-t-lg hover:scale-105 transition-transform duration-700"
                     loading="lazy"
                   />
                 </figure>
@@ -125,9 +126,9 @@ const Resources = () => {
                   <h3 className="text-[#83C5E0] sm:text-xl text-lg sm:mt-5 mt-3">
                     {blog.categories}
                   </h3>
-                  <h2 className="sm:text-2xl text-xl sm:my-5 my-3">
+                  <Link to={`/blog/${blog._id}`} className="sm:text-2xl text-xl sm:my-5 my-3">
                     {blog.title}
-                  </h2>
+                  </Link>
                   <p className="text-sm text-gray-400">{blog.summary}</p>
                   <div className="mt-4 flex items-center gap-3">
                     <div>

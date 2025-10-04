@@ -114,7 +114,7 @@ const Dashboard = () => {
             <FaBars size={24} />
           </button>
         </div>
-        <main className="p-4 sm:p-6 flex-1 overflow-y-auto">
+        <main className="sm:p-6 flex-1 overflow-y-auto">
           <Outlet />
         </main>
       </div>
