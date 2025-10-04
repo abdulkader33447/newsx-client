@@ -167,7 +167,7 @@ const BlogPostForm = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Title + Image */}
-          <div className="flex items-center justify-center gap-5">
+          <div className="flex sm:flex-row flex-col items-center justify-center gap-5">
             {/* Title */}
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700">
@@ -189,7 +189,7 @@ const BlogPostForm = () => {
               <label className="block text-sm font-medium text-gray-700">
                 Image
               </label>
-              <div className="border border-dashed bg-white border-gray-300 p-4 text-center text-gray-500">
+              <div className="border border-dashed w-75 bg-white border-gray-300 p-4 text-center text-gray-500">
                 <div className="flex justify-center items-center h-full">
                   <FiFilm className="text-4xl text-[#6200EE]" />
                 </div>

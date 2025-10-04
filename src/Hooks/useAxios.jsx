@@ -2,7 +2,7 @@ import axios from "axios";
 import useAuth from "./useAuth";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "https://newsx-server.vercel.app",
   //   timeout: 1000,
   //   headers: {'X-Custom-Header': 'foobar'}
 });
