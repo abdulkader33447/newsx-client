@@ -34,7 +34,7 @@ const RecentBlogs = () => {
   }
 
   return (
-    <div className="mt-15 bg-[#0C0A25] text-gray-200 min-h-screen">
+    <div className="mt-15 bg-[#0C0A25] text-gray-200 min-h-screen pb-10">
       <div className="sm:w-8/12 w-11/12 mx-auto pt-10">
         <h1 className="lg:text-3xl text-2xl font-bold mb-6">
           Our Recent <br /> Blogs
