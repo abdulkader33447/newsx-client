@@ -2,7 +2,7 @@ import axios from "axios";
 import useAuth from "./useAuth";
 
 const axiosInstance = axios.create({
-  baseURL: "https://newsx-server.vercel.app",
+  baseURL: "https://newsx-server-g4oq.onrender.com",
   //   timeout: 1000,
   //   headers: {'X-Custom-Header': 'foobar'}
 });
