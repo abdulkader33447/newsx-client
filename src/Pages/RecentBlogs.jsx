@@ -11,7 +11,7 @@ const RecentBlogs = () => {
   const { user } = useAuth();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-console.log(blogs, "from recent blog");
+// console.log(blogs, "from recent blog");
 
   const fetchBlogs = async () => {
     setLoading(true);

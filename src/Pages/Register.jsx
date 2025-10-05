@@ -34,7 +34,7 @@ const Register = () => {
       };
 
       const userRes = await axios.post("users", userInfo);
-      console.log(userRes.data);
+      // console.log(userRes.data);
 
       Swal.fire({
         position: "top-end",

@@ -22,7 +22,7 @@ const BlogDetail = () => {
   const location = useLocation();
   // console.log(location.pathname);
   const currentPath = location.pathname.replace(/^\//, "");
-  console.log(currentPath);
+  // console.log(currentPath);
 
   useEffect(() => {
     const fetchBlog = async () => {
